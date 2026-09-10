@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>India — The Living Heritage</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    cursor: none; /* Hide default cursor */
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Poppins,sans-serif;
+    background:#07151b;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* =========================
+   CUSTOM CURSOR
+========================= */
+.cursor-dot, .cursor-outline {
+    position: fixed;
+    top: 0; left: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 99999;
+    pointer-events: none;
+}
+.cursor-dot {
+    width: 6px; height: 6px;
+    background: #ff9d2e;
+}
+.cursor-outline {
+    width: 40px; height: 40px;
+    border: 1px solid rgba(255, 157, 46, 0.5);
+    transition: width 0.2s, height 0.2s, background-color 0.2s;
+}
+.cursor-outline.hover-active {
+    width: 60px; height: 60px;
+    background-color: rgba(255, 157, 46, 0.1);
+    border-color: transparent;
+}
+
+/* =========================
+   LOADER
+========================= */
+
+.loader{
+    position:fixed;
+    inset:0;
+    background:#07151b;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:99999;
+    transition:.8s;
+}
+
+.loader.hide{
+    opacity:0;
+    pointer-events:none;
+}
+
+.loader-content{
+    text-align:center;
+}
+
+.loader-wheel{
+    width:70px;
+    height:70px;
+    border:4px solid rgba(255,255,255,.15);
+    border-top-color:#ff9d2e;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:auto auto 20px;
+}
+
+.loader h2{
+    font-family:"Cormorant Garamond";
+    font-size:34px;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+nav{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    z-index:5000;
+    padding:18px 6%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:linear-gradient(
+        rgba(0,0,0,.65),
+        rgba(0,0,0,0)
+    );
+    transition:.4s;
+}
+
+nav.scrolled{
+    background:rgba(4,15,20,.92);
+    backdrop-filter:blur(18px);
+    box-shadow:0 10px 40px rgba(0,0,0,.25);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-weight:700;
+    letter-spacing:1px;
+}
+
+.logo-symbol{
+    width:43px;
+    height:43px;
+    border:2px solid #ffad45;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+}
+
+.logo span{
+    font-family:"Cormorant Garamond";
+    font-size:27px;
+}
+
+.nav-links{
+    display:flex;
+    gap:30px;
+}
+
+.nav-links a{
+    color:white;
+    text-decoration:none;
+    font-size:14px;
+    transition:.3s;
+}
+
+.nav-links a:hover{
+    color:#ffae42;
+}
+
+.menu{
+    display:none;
+    font-size:27px;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    min-height:100vh;
+    position:relative;
+    display:flex;
+    align-items:center;
+    overflow:hidden;
+    background:
+    linear-gradient(
+        90deg,
+        rgba(3,14,19,.9) 0%,
+        rgba(3,14,19,.55) 45%,
+        rgba(3,14,19,.15) 100%
+    ),
+    url("https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=2200&q=90")
+    center/cover;
+}
+
+.hero:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+    radial-gradient(circle at 80% 50%,rgba(255,151,43,.22),transparent 25%),
+    linear-gradient(transparent 70%,#07151b 100%);
+}
+
+.hero-content{
+    position:relative;
+    z-index:3;
+    max-width:850px;
+    margin-left:8%;
+    animation:heroIn 1.3s ease;
+}
+
+@keyframes heroIn{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+.eyebrow{
+    text-transform:uppercase;
+    letter-spacing:5px;
+    color:#ffb35a;
+    font-size:13px;
+    margin-bottom:18px;
+}
+
+.hero h1{
+    font-family:"Cormorant Garamond";
+    font-size:clamp(65px,9vw,130px);
+    line-height:.78;
+    margin-bottom:30px;
+}
+
+.hero h1 span{
+    color:#ffab3d;
+    text-shadow: 0 0 30px rgba(255, 171, 61, 0.4);
+}
+
+.hero p{
+    max-width:650px;
+    color:#dce4e5;
+    font-size:17px;
+    line-height:1.9;
+}
+
+.hero-buttons{
+    margin-top:35px;
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    padding:14px 27px;
+    border-radius:50px;
+    text-decoration:none;
+    border:1px solid rgba(255,255,255,.25);
+    color:white;
+    cursor:none;
+    transition:.3s;
+    font-family:Poppins;
+    font-size:14px;
+}
+
+.btn.primary{
+    background:linear-gradient(90deg,#ff8e28,#ffb448);
+    color:#111;
+    border:none;
+    font-weight:600;
+}
+
+.btn:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 35px rgba(255,155,55,.3);
+}
+
+/* floating circles */
+
+.orb{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(1px);
+    opacity:.35;
+    animation:float 8s ease-in-out infinite;
+}
+
+.orb1{
+    width:130px;
+    height:130px;
+    background:#ff9a32;
+    right:15%;
+    top:20%;
+}
+
+.orb2{
+    width:80px;
+    height:80px;
+    background:#48b8a0;
+    right:30%;
+    bottom:20%;
+    animation-delay:2s;
+}
+
+@keyframes float{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-35px)}
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 5;
+}
+
+.scroll-indicator p {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffab42;
+}
+
+.mouse {
+    width: 26px;
+    height: 42px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    position: relative;
+}
+
+.mouse::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 6px;
+    background: #ffab42;
+    border-radius: 50%;
+    animation: scroll 1.5s infinite;
+}
+
+@keyframes scroll {
+    0% { transform: translate(-50%, 0); opacity: 1; }
+    100% { transform: translate(-50%, 15px); opacity: 0; }
+}
+
+/* =========================
+   STATS RIBBON
+========================= */
+
+.stats-ribbon {
+    display: flex;
+    justify-content: space-around;
+    padding: 40px 7%;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.stat { text-align: center; }
+.stat h3 { font-family: "Cormorant Garamond"; font-size: 42px; color: #ffad45; }
+.stat p { font-size: 13px; color: #aebec2; text-transform: uppercase; letter-spacing: 1px; }
+
+/* =========================
+   INTRO / CULTURE
+========================= */
+
+.section{
+    padding:100px 7%;
+}
+
+.section-title{
+    max-width:800px;
+    margin-bottom:50px;
+}
+
+.section-title small{
+    color:#ffab42;
+    letter-spacing:4px;
+    text-transform:uppercase;
+}
+
+.section-title h2{
+    font-family:"Cormorant Garamond";
+    font-size:60px;
+    line-height:1;
+    margin:12px 0;
+}
+
+.section-title p{
+    color:#aebec2;
+    line-height:1.8;
+}
+
+/* =========================
+   CULTURE CARDS & STATE CARDS (GLASSMORPHISM)
+========================= */
+
+.culture-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.culture-card, .state-card {
+    height:340px;
+    border-radius:24px;
+    overflow:hidden;
+    position:relative;
+    cursor:none;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    transition:.5s;
+}
+
+.state-card {
+    height:220px;
+    background:#12242a;
+}
+
+.culture-card:hover, .state-card:hover {
+    transform:translateY(-12px) scale(1.02);
+}
+
+.culture-card img, .state-card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.7s;
+}
+
+.culture-card:hover img, .state-card:hover img {
+    transform:scale(1.12);
+}
+
+.culture-card:after, .state-card:after {
+    content:"";
+    position:absolute;
+    inset:0;
+    background: linear-gradient(
+        to top,
+        rgba(4, 15, 20, 1) 0%,
+        rgba(4, 15, 20, 0.6) 40%,
+        transparent 100%
+    );
+    transition: 0.5s;
+}
+
+.culture-card:hover:after, .state-card:hover:after {
+    background: linear-gradient(
+        to top,
+        rgba(255, 157, 46, 0.9) 0%,
+        rgba(4, 15, 20, 0.8) 50%,
+        transparent 100%
+    );
+}
+
+.card-text, .state-info {
+    position:absolute;
+    z-index:2;
+    bottom:25px;
+    left:25px;
+    right:20px;
+    transform: translateY(20px);
+    opacity: 0.8;
+    transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.state-info {
+    bottom:17px;
+    left:18px;
+}
+
+.culture-card:hover .card-text, 
+.state-card:hover .state-info {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.card-text h3{
+    font-family:"Cormorant Garamond";
+    font-size:32px;
+}
+
+.card-text p{
+    font-size:12px;
+    color:#ddd;
+}
+
+.state-info h3{
+    font-family:"Cormorant Garamond";
+    font-size:28px;
+}
+
+.state-info small{
+    color:#ffb35a;
+}
+
+/* =========================
+   MAP
+========================= */
+
+.map-section{
+    background:
+    radial-gradient(
+        circle at 50% 30%,
+        rgba(255,156,53,.1),
+        transparent 40%
+    );
+}
+
+.map-wrapper{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:30px;
+    overflow:hidden;
+    position:relative;
+    box-shadow:0 30px 100px rgba(0,0,0,.3);
+}
+
+#map{
+    height:680px;
+    width:100%;
+    background:#091920;
+}
+
+.map-overlay{
+    position:absolute;
+    z-index:1000;
+    top:25px;
+    left:25px;
+    padding:18px 22px;
+    border-radius:18px;
+    background:rgba(5,17,22,.88);
+    backdrop-filter:blur(15px);
+    max-width:300px;
+}
+
+.map-overlay h3{
+    font-family:"Cormorant Garamond";
+    font-size:26px;
+}
+
+.map-overlay p{
+    color:#9eb0b4;
+    font-size:12px;
+    line-height:1.6;
+    margin-top:5px;
+}
+
+/* leaflet */
+.leaflet-container{
+    font-family:Poppins;
+}
+
+.state-tooltip{
+    background:#07151b;
+    border:1px solid #ff9f35;
+    color:white;
+    border-radius:10px;
+    padding:6px 10px;
+    font-size:12px;
+}
+
+.state-tooltip:before{
+    display:none;
+}
+
+/* =========================
+   STATE DIRECTORY
+========================= */
+
+.directory{
+    background:#061116;
+}
+
+.search-row{
+    display:flex;
+    gap:15px;
+    margin-bottom:35px;
+    flex-wrap:wrap;
+}
+
+.search{
+    flex:1;
+    min-width:250px;
+    padding:16px 20px;
+    border-radius:50px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.05);
+    color:white;
+    outline:none;
+    font-family:Poppins;
+    cursor:auto;
+}
+
+.filter{
+    padding:14px 20px;
+    border-radius:50px;
+    border:1px solid rgba(255,255,255,.12);
+    background:#0c2028;
+    color:white;
+    cursor:none;
+}
+
+.states-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+}
+
+/* =========================
+   EXPERIENCE
+========================= */
+
+.experience{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:50px;
+    align-items:center;
+}
+
+.experience-image{
+    height:600px;
+    border-radius:30px;
+    overflow:hidden;
+}
+
+.experience-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.experience-content h2{
+    font-family:"Cormorant Garamond";
+    font-size:64px;
+}
+
+.experience-content p{
+    color:#aebdc0;
+    line-height:1.9;
+    margin:20px 0;
+}
+
+.experience-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-top:25px;
+}
+
+.experience-item{
+    padding:18px;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:15px;
+    background:rgba(255,255,255,.035);
+}
+
+.experience-item b{
+    display:block;
+    margin-bottom:5px;
+}
+
+.experience-item span{
+    color:#94a8ad;
+    font-size:12px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    padding:60px 7%;
+    border-top:1px solid rgba(255,255,255,.1);
+    display:flex;
+    justify-content:space-between;
+    gap:30px;
+    flex-wrap:wrap;
+}
+
+footer h2{
+    font-family:"Cormorant Garamond";
+    font-size:35px;
+}
+
+footer p{
+    color:#8da0a5;
+    font-size:13px;
+    margin-top:8px;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:9000;
+    background:rgba(0,0,0,.78);
+    backdrop-filter:blur(12px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal.active{
+    display:flex;
+}
+
+.modal-box{
+    width:min(1100px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:#0a1b22;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:30px;
+    position:relative;
+    animation:modalIn .45s ease;
+}
+
+@keyframes modalIn{
+    from{
+        opacity:0;
+        transform:scale(.9) translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+.modal-hero{
+    height:360px;
+    position:relative;
+}
+
+.modal-hero img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.modal-hero:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        transparent 30%,
+        #0a1b22
+    );
+}
+
+.modal-title{
+    position:absolute;
+    z-index:2;
+    bottom:35px;
+    left:40px;
+}
+
+.modal-title h2{
+    font-family:"Cormorant Garamond";
+    font-size:65px;
+}
+
+.close{
+    position:absolute;
+    z-index:5;
+    right:20px;
+    top:20px;
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.3);
+    background:rgba(0,0,0,.5);
+    color:white;
+    font-size:20px;
+    cursor:none;
+}
+
+.modal-content{
+    padding:10px 40px 45px;
+}
+
+.modal-intro{
+    color:#aebfc3;
+    line-height:1.9;
+    margin-bottom:30px;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+    gap:20px;
+}
+
+.detail-box{
+    padding: 24px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: 0.3s ease;
+}
+
+.detail-box:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 174, 67, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.detail-box h4{
+    color:#ffae43;
+    margin-bottom:10px;
+}
+
+.detail-box p{
+    color:#b8c5c8;
+    line-height:1.7;
+    font-size:14px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1000px){
+    .culture-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+    .states-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+    .experience{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:700px){
+    nav{
+        padding:15px 5%;
+    }
+    .nav-links{
+        display:none;
+    }
+    .menu{
+        display:block;
+    }
+    .hero-content{
+        margin:0 7%;
+    }
+    .hero h1{
+        font-size:70px;
+    }
+    .stats-ribbon {
+        flex-direction: column;
+        gap: 25px;
+    }
+    .section{
+        padding:70px 5%;
+    }
+    .section-title h2{
+        font-size:48px;
+    }
+    .culture-grid{
+        grid-template-columns:1fr;
+    }
+    .states-grid{
+        grid-template-columns:1fr;
+    }
+    #map{
+        height:500px;
+    }
+    .map-overlay{
+        display:none;
+    }
+    .experience-image{
+        height:400px;
+    }
+    .experience-content h2{
+        font-size:48px;
+    }
+    .detail-grid{
+        grid-template-columns:1fr;
+    }
+    .modal-title{
+        left:25px;
+    }
+    .modal-title h2{
+        font-size:48px;
+    }
+    .modal-content{
+        padding:10px 25px 30px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor-dot" id="cursor-dot"></div>
+<div class="cursor-outline" id="cursor-outline"></div>
+
+<!-- LOADER -->
+
+<div class="loader" id="loader">
+    <div class="loader-content">
+        <div class="loader-wheel"></div>
+        <h2>Discovering India...</h2>
+    </div>
+</div>
+
+<!-- NAVIGATION -->
+
+<nav id="navbar">
+    <div class="logo">
+        <div class="logo-symbol">ॐ</div>
+        <span>India • The Living Heritage</span>
+    </div>
+    <div class="nav-links">
+        <a href="#home" class="hover-target">Home</a>
+        <a href="#culture" class="hover-target">Culture</a>
+        <a href="#map-section" class="hover-target">Explore Map</a>
+        <a href="#states" class="hover-target">States</a>
+        <a href="#experiences" class="hover-target">Experiences</a>
+    </div>
+    <div class="menu hover-target">☰</div>
+</nav>
+
+<!-- HERO -->
+
+<section class="hero" id="home">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    
+    <div class="hero-content">
+        <div class="eyebrow">
+            28 States • 8 Union Territories • One Incredible India
+        </div>
+        <h1>
+            The Soul<br>
+            of <span>India</span>
+        </h1>
+        <p>
+            Journey through India's living heritage — from Himalayan
+            monasteries and royal palaces to coastal traditions,
+            ancient temples, colourful festivals and extraordinary food.
+        </p>
+        <div class="hero-buttons">
+            <a href="#map-section" class="btn primary hover-target">
+                Explore India →
+            </a>
+            <a href="#culture" class="btn hover-target">
+                Discover Culture
+            </a>
+        </div>
+    </div>
+    
+    <!-- SCROLL INDICATOR ENHANCEMENT -->
+    <div class="scroll-indicator">
+        <div class="mouse"></div>
+        <p>Scroll to Explore</p>
+    </div>
+</section>
+
+<!-- STATS RIBBON ENHANCEMENT -->
+<div class="stats-ribbon">
+    <div class="stat"><h3>5,000+</h3><p>Years of History</p></div>
+    <div class="stat"><h3>40</h3><p>UNESCO Sites</p></div>
+    <div class="stat"><h3>22</h3><p>Official Languages</p></div>
+    <div class="stat"><h3>8</h3><p>Classical Dances</p></div>
+</div>
+
+<!-- CULTURE -->
+
+<section class="section" id="culture">
+    <div class="section-title">
+        <small>Experience India</small>
+        <h2>
+            A civilisation that<br>
+            never stopped living.
+        </h2>
+        <p>
+            India's culture is expressed through its people, architecture,
+            music, dance, festivals, crafts, food and landscapes.
+        </p>
+    </div>
+
+    <div class="culture-grid">
+        <div class="culture-card hover-target">
+            <img src="https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=1000&q=85">
+            <div class="card-text">
+                <h3>Heritage</h3>
+                <p>Forts • Palaces • Temples • Monuments</p>
+            </div>
+        </div>
+
+        <div class="culture-card hover-target">
+            <img src="https://images.unsplash.com/photo-1514222134-b57cbb8ce073?auto=format&fit=crop&w=1000&q=85">
+            <div class="card-text">
+                <h3>Festivals</h3>
+                <p>Colour • Music • Traditions • Celebration</p>
+            </div>
+        </div>
+
+        <div class="culture-card hover-target">
+            <img src="https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=1000&q=85">
+            <div class="card-text">
+                <h3>Arts & Crafts</h3>
+                <p>Handloom • Sculpture • Painting • Crafts</p>
+            </div>
+        </div>
+
+        <div class="culture-card hover-target">
+            <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1000&q=85">
+            <div class="card-text">
+                <h3>Food</h3>
+                <p>Flavours • Spices • Regional Cuisine</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MAP -->
+
+<section class="section map-section" id="map-section">
+    <div class="section-title">
+        <small>Interactive India</small>
+        <h2>Explore every corner.</h2>
+        <p>
+            Select a state on the map to discover its heritage,
+            destinations, culture, food and festivals.
+        </p>
+    </div>
+
+    <div class="map-wrapper hover-target">
+        <div class="map-overlay">
+            <h3>🇮🇳 Choose a State</h3>
+            <p>
+                Hover over the map and click any state to begin
+                your cultural journey.
+            </p>
+        </div>
+        <div id="map"></div>
+    </div>
+</section>
+
+<!-- STATE DIRECTORY -->
+
+<section class="section directory" id="states">
+    <div class="section-title">
+        <small>Discover by State</small>
+        <h2>India's cultural mosaic.</h2>
+        <p>
+            Search and explore states individually.
+        </p>
+    </div>
+
+    <div class="search-row">
+        <input
+            id="search"
+            class="search hover-target"
+            placeholder="Search a state..."
+        >
+        <select id="regionFilter" class="filter hover-target">
+            <option value="all">All Regions</option>
+            <option value="north">North</option>
+            <option value="south">South</option>
+            <option value="east">East</option>
+            <option value="west">West</option>
+            <option value="central">Central</option>
+            <option value="northeast">North East</option>
+        </select>
+    </div>
+
+    <div class="states-grid" id="statesGrid"></div>
+</section>
+
+<!-- EXPERIENCES -->
+
+<section class="section" id="experiences">
+    <div class="experience">
+        <div class="experience-image">
+            <img
+            src="https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1300&q=90">
+        </div>
+
+        <div class="experience-content">
+            <small class="eyebrow">
+                ONE COUNTRY • MANY WORLDS
+            </small>
+            <h2>
+                Travel deeper.<br>
+                Feel India.
+            </h2>
+            <p>
+                From ancient cities and sacred rivers to mountains,
+                forests, beaches and living traditions, India offers
+                experiences shaped by thousands of years of history.
+            </p>
+
+            <div class="experience-list">
+                <div class="experience-item">
+                    <b>🏛 Heritage</b>
+                    <span>Explore India's historic monuments.</span>
+                </div>
+                <div class="experience-item">
+                    <b>🎭 Culture</b>
+                    <span>Discover music, dance and traditions.</span>
+                </div>
+                <div class="experience-item">
+                    <b>🍛 Cuisine</b>
+                    <span>Every region has its own flavour.</span>
+                </div>
+                <div class="experience-item">
+                    <b>🏔 Nature</b>
+                    <span>Mountains, forests, deserts and oceans.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+    <div>
+        <h2>India • The Living Heritage</h2>
+        <p>
+            A digital journey through India's states, cultures
+            and heritage.
+        </p>
+    </div>
+    <div>
+        <p>
+            Inspired by India's incredible diversity.
+        </p>
+        <p>
+            © 2026 India Heritage Project
+        </p>
+    </div>
+</footer>
+
+<!-- STATE MODAL -->
+
+<div class="modal" id="stateModal">
+    <div class="modal-box">
+        <button class="close hover-target" id="closeModal">×</button>
+
+        <div class="modal-hero">
+            <img id="modalImage" onerror="this.src='https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=1200&q=80'">
+            <div class="modal-title">
+                <small id="modalRegion"></small>
+                <h2 id="modalName"></h2>
+            </div>
+        </div>
+
+        <div class="modal-content">
+            <p class="modal-intro" id="modalDescription"></p>
+
+            <div class="detail-grid">
+                <div class="detail-box">
+                    <h4>🏛 Heritage & Places</h4>
+                    <p id="modalPlaces"></p>
+                </div>
+                <div class="detail-box">
+                    <h4>🎭 Culture</h4>
+                    <p id="modalCulture"></p>
+                </div>
+                <div class="detail-box">
+                    <h4>🪘 Music & Dance</h4>
+                    <p id="modalMusic"></p>
+                </div>
+                <div class="detail-box">
+                    <h4>🗣️ Local Language</h4>
+                    <p id="modalLanguage"></p>
+                </div>
+                <div class="detail-box">
+                    <h4>🎉 Festivals</h4>
+                    <p id="modalFestivals"></p>
+                </div>
+                <div class="detail-box">
+                    <h4>🍛 Famous Food</h4>
+                    <p id="modalFood"></p>
+                </div>
+            </div>
+            
+            <a href="#" target="_blank" id="modalTourismLink" class="btn primary hover-target" style="display:inline-block; margin-top: 30px;">
+                Visit Official Tourism Website ↗
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+/* ==========================================
+   CUSTOM CURSOR LOGIC
+========================================== */
+const cursorDot = document.getElementById("cursor-dot");
+const cursorOutline = document.getElementById("cursor-outline");
+
+window.addEventListener("mousemove", function(e) {
+    const posX = e.clientX;
+    const posY = e.clientY;
+
+    cursorDot.style.left = `${posX}px`;
+    cursorDot.style.top = `${posY}px`;
+
+    cursorOutline.animate({
+        left: `${posX}px`,
+        top: `${posY}px`
+    }, { duration: 500, fill: "forwards" });
+});
+
+// Setup dynamic hover targets for custom cursor scaling/states
+function initCursorHover() {
+    document.querySelectorAll('.hover-target, button, a, input, select, .culture-card, .state-card').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorOutline.classList.add('hover-active');
+            cursorDot.style.transform = 'translate(-50%, -50%) scale(0.5)';
+        });
+        el.addEventListener('mouseleave', () => {
+            cursorOutline.classList.remove('hover-active');
+            cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+        });
+    });
+}
+
+/* ==========================================
+   STATE DATABASE
+========================================== */
+
+const states = [
+{
+name:"Andhra Pradesh",
+region:"south",
+capital:"Amaravati",
+image:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Venkateswara_Temple_Tirupati.jpg/1200px-Venkateswara_Temple_Tirupati.jpg",
+description:"A land of ancient temples, dramatic coastlines, classical traditions and rich culinary heritage.",
+places:"Tirupati Balaji Temple, Visakhapatnam, Amaravati Stupa, Araku Valley, Vijayawada",
+culture:"Kuchipudi dance, Kalamkari textiles, temple traditions and Telugu literature.",
+musicAndDance:"Kuchipudi (Classical), Dhimsa (Folk), Burra Katha, and Kolatam.",
+languagePhrases:"<b>Hello:</b> Namaskaram<br><b>How are you?:</b> Meeru ela unnaru?<br><b>Thank you:</b> Dhanyavadalu",
+festivals:"Ugadi, Tirumala Brahmotsavam, Visakha Utsav, and Sankranti.",
+food:"Pulihora, Gongura Mutton, Pesarattu, and Andhra-style spicy thali.",
+tourismWebsite:"https://tourism.ap.gov.in/"
+},
+{
+name:"Arunachal Pradesh",
+region:"northeast",
+capital:"Itanagar",
+image:"https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85",
+description:"India's eastern Himalayan frontier is known for high mountains, monasteries, forests and diverse tribal cultures.",
+places:"Tawang Monastery, Ziro Valley, Bomdila, Itanagar, Mechuka",
+culture:"Monastic traditions, tribal textiles, indigenous crafts and vibrant community celebrations.",
+musicAndDance:"Aji Lamu, Roppi, Hurkani, Popir, and Ponung dances. Traditional chants and folk songs.",
+languagePhrases:"<b>Hello:</b> Tashi Delek / Aya<br><b>How are you?:</b> Nyi ka taya?<br><b>Thank you:</b> Kadinchey",
+festivals:"Losar, Solung, Nyokum and Si-Donyi.",
+food:"Thukpa, momos, bamboo shoot dishes and regional meat preparations.",
+tourismWebsite:"https://www.arunachaltourism.com/"
+},
+{
+name:"Assam",
+region:"northeast",
+capital:"Dispur",
+image:"https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?auto=format&fit=crop&w=1200&q=85",
+description:"A beautiful land of the Brahmaputra, tea gardens, wildlife and distinctive cultural traditions.",
+places:"Assam Tea Gardens, Kaziranga National Park, Kamakhya Temple, Majuli Island",
+culture:"Bihu traditions, Sattriya classical dance, silk weaving, and Vaishnavite heritage.",
+musicAndDance:"Bihu Dance, Sattriya (Classical), Bagurumba, and Bhortal. Borgeet and folk music.",
+languagePhrases:"<b>Hello:</b> Namaskar<br><b>How are you?:</b> Apuni kene ase?<br><b>Thank you:</b> Dhanyabad",
+festivals:"Rongali Bihu, Ambubachi Mela, and Ali-Aye-Ligang.",
+food:"Khar, Masor Tenga, Pitha, Duck Curry, and Assamese Thali.",
+tourismWebsite:"https://assamtourism.gov.in/"
+},
+{
+name:"Bihar",
+region:"east",
+capital:"Patna",
+image:"https://images.unsplash.com/photo-1605640840605-14ac1855827b?auto=format&fit=crop&w=1200&q=85",
+description:"An ancient centre of learning and spirituality associated with Buddhism, Jainism and the great universities of the past.",
+places:"Bodh Gaya, Nalanda, Rajgir, Patna, Vaishali",
+culture:"Madhubani painting, folk traditions and Buddhist-Jain heritage.",
+musicAndDance:"Jhijhiya, Jat-Jatin, Bidesiya, and Sohar songs.",
+languagePhrases:"<b>Hello:</b> Pranam<br><b>How are you?:</b> Kaisan bani?<br><b>Thank you:</b> Dhanyawad",
+festivals:"Chhath Puja, Sonepur Mela and Sama-Chakeva.",
+food:"Litti Chokha, Sattu dishes, Thekua and Khaja.",
+tourismWebsite:"https://tourism.bihar.gov.in/"
+},
+{
+name:"Chhattisgarh",
+region:"central",
+capital:"Raipur",
+image:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Chitrakot_Waterfalls_Bastar.jpg/1200px-Chitrakot_Waterfalls_Bastar.jpg",
+description:"Rich in mineral resources, coal and iron ore mining, dense forests, and ancient tribal heritage.",
+places:"Bhilai Mining Belt, Chitrakote Waterfalls, Bastar, Dantewada Temple",
+culture:"Tribal metal crafts (Bell metal/Dhokra), folk music, Panthi and Raut Nacha dance.",
+musicAndDance:"Panthi, Raut Nacha, Pandavani (musical narrative), and Karma dance.",
+languagePhrases:"<b>Hello:</b> Johar<br><b>How are you?:</b> Ka haal chaal he?<br><b>Thank you:</b> Dhanyawad",
+festivals:"Bastar Dussehra, Madai Festival, Bhoramdeo Mahotsav, and Hareli.",
+food:"Fara, Chila, Muthia, Aamat, and Mahua preparations.",
+tourismWebsite:"https://tourism.cg.gov.in/"
+},
+{
+name:"Goa",
+region:"west",
+capital:"Panaji",
+image:"https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=85",
+description:"A coastal state where beaches, Indo-Portuguese heritage, music and local traditions meet.",
+places:"Panaji, Old Goa, Calangute, Palolem, Basilica of Bom Jesus",
+culture:"Indo-Portuguese architecture, Konkani traditions, music and coastal life.",
+musicAndDance:"Fugdi, Dekhnni, Corridinho, and traditional Goan Trance / Mandos.",
+languagePhrases:"<b>Hello:</b> Namaskar<br><b>How are you?:</b> Kaso asa tu?<br><b>Thank you:</b> Dev boro dis dium",
+festivals:"Carnival, Shigmo, Christmas and Sao Joao.",
+food:"Goan fish curry, bebinca, xacuti and traditional coastal cuisine.",
+tourismWebsite:"https://goatourism.gov.in/"
+},
+{
+name:"Gujarat",
+region:"west",
+capital:"Gandhinagar",
+image:"https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=85",
+description:"A state of ancient civilisations, colourful crafts, pilgrimage sites and remarkable landscapes.",
+places:"Ahmedabad, Dwarka, Kutch, Somnath, Statue of Unity",
+culture:"Garba, Bandhani, Patola weaving and handicrafts.",
+musicAndDance:"Garba, Dandiya Raas, Bhavai (folk theatre), and Sugam Sangeet.",
+languagePhrases:"<b>Hello:</b> Namaste<br><b>How are you?:</b> Kem cho?<br><b>Thank you:</b> Aabhar",
+festivals:"Navratri, Uttarayan, Rann Utsav.",
+food:"Dhokla, Thepla, Fafda-Jalebi and Gujarati thali.",
+tourismWebsite:"https://www.gujarattourism.com/"
+},
+{
+name:"Haryana",
+region:"north",
+capital:"Chandigarh",
+image:"https://www.travelworldplanet.com/wp-content/uploads/2022/09/Chor-Gumbad-Narnaul-Haryana-min.jpg",
+description:"A land connected with ancient history, rural landscapes, wrestling heritage, and vibrant folk traditions.",
+places:"Brahma Sarovar, Kurukshetra, Surajkund Lake, Pinjore Gardens, Sultanpur Bird Sanctuary",
+culture:"Phag folk dance, Saang theatre, wrestling culture (Akkada), and traditional handicrafts.",
+musicAndDance:"Phag, Saang, Chhati dance, and traditional Ragini music.",
+languagePhrases:"<b>Hello:</b> Ram Ram<br><b>How are you?:</b> Ke haal sae?<br><b>Thank you:</b> Dhanbaad",
+festivals:"Surajkund Crafts Mela, Baisakhi, Teej, and Gita Jayanti.",
+food:"Bajra Aloo Roti, Churma, Bathua Raita, Kadhi Pakora, and Malpua.",
+tourismWebsite:"https://haryanatourism.gov.in/"
+},
+{
+name:"Himachal Pradesh",
+region:"north",
+capital:"Shimla",
+image:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=85",
+description:"Mountain valleys, ancient temples, Buddhist monasteries and spectacular Himalayan landscapes define the state.",
+places:"Shimla, Manali, Dharamshala, Spiti, Kullu",
+culture:"Pahari traditions, Buddhist heritage, wool crafts and folk dances.",
+musicAndDance:"Nati (famous folk dance), Kayang, and traditional Pahari music.",
+languagePhrases:"<b>Hello:</b> Namaste<br><b>How are you?:</b> Tusaan kiyan ho?<br><b>Thank you:</b> Dhanyawad",
+festivals:"Kullu Dussehra, Losar and Minjar.",
+food:"Dham, siddu, madra and Tibetan-influenced cuisine.",
+tourismWebsite:"https://himachaltourism.gov.in/"
+},
+{
+name:"Jharkhand",
+region:"east",
+capital:"Ranchi",
+image:"https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=85",
+description:"A forest-rich state celebrated for waterfalls, tribal traditions and mineral landscapes.",
+places:"Ranchi, Deoghar, Jamshedpur, Netarhat",
+culture:"Santhal and other tribal traditions, Sohrai painting and folk music.",
+musicAndDance:"Jhumar, Paika, Chhau, and Santhali folk music.",
+languagePhrases:"<b>Hello:</b> Johar<br><b>How are you?:</b> Cheleka menama?<br><b>Thank you:</b> Adi Johar",
+festivals:"Sarhul, Karma and Sohrai.",
+food:"Dhuska, Rugra and traditional rice-based dishes.",
+tourismWebsite:"https://tourism.jharkhand.gov.in/"
+},
+{
+name:"Karnataka",
+region:"south",
+capital:"Bengaluru",
+image:"https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1200&q=85",
+description:"Famous for rolling coffee plantation hills, heritage temples, royal palaces, and vibrant coastal traditions.",
+places:"Chikmagalur Coffee Estates, Coorg Coffee Plantations, Hampi, Mysore Palace, Gokarna",
+culture:"Yakshagana dance-drama, Carnatic classical music, Mysuru silk weaving, and wood carvings.",
+musicAndDance:"Yakshagana, Dollu Kunitha, and Carnatic classical music.",
+languagePhrases:"<b>Hello:</b> Namaskara<br><b>How are you?:</b> Hegiddira?<br><b>Thank you:</b> Dhanyavadagalu",
+festivals:"Mysuru Dasara, Ugadi, Kambala, and Hampi Utsav.",
+food:"Filter Coffee, Bisi Bele Bath, Mysore Pak, Neer Dosa, and Ragi Mudde.",
+tourismWebsite:"https://karnatakatourism.org/"
+},
+{
+name:"Kerala",
+region:"south",
+capital:"Thiruvananthapuram",
+image:"https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=85",
+description:"Known for lush landscapes, backwaters, Ayurveda, classical arts and distinctive coastal traditions.",
+places:"Munnar, Alappuzha, Kochi, Wayanad, Kovalam",
+culture:"Kathakali, Mohiniyattam, Kalaripayattu and traditional architecture.",
+musicAndDance:"Kathakali, Mohiniyattam, Theyyam, and Sopana Sangeetham.",
+languagePhrases:"<b>Hello:</b> Namaskaram<br><b>How are you?:</b> Sukhamaano?<br><b>Thank you:</b> Nanni",
+festivals:"Onam, Vishu and Thrissur Pooram.",
+food:"Appam, sadya, puttu, avial and Kerala seafood.",
+tourismWebsite:"https://www.keralatourism.org/"
+},
+{
+name:"Madhya Pradesh",
+region:"central",
+capital:"Bhopal",
+image:"https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=1200&q=85",
+description:"The spiritual and historic heart of India, famous for sacred temples, forts, and wildlife reserves.",
+places:"Mahakaleshwar Jyotirlinga Temple Ujjain, Sanchi Stupa, Khajuraho, Orchha, Gwalior Fort",
+culture:"Simhastha heritage, Malwa folk dance, Gond tribal painting, and Chanderi weaving.",
+musicAndDance:"Jawara, Matki, Grida, and traditional Gond / Baiga tribal music.",
+languagePhrases:"<b>Hello:</b> Namaste<br><b>How are you?:</b> Aap kaise hain?<br><b>Thank you:</b> Dhanyawad",
+festivals:"Ujjain Simhastha Kumbh Mela, Khajuraho Dance Festival, Lokrang, and Bhagoria.",
+food:"Poha Jalebi, Bhutte Ka Kees, Dal Bafla, Sabudana Khichdi, and Malpua.",
+tourismWebsite:"https://www.mptourism.com/"
+},
+{
+name:"Maharashtra",
+region:"west",
+capital:"Mumbai",
+image:"https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?auto=format&fit=crop&w=1200&q=85",
+description:"Land of historic temples, sacred pilgrimage sites, Maratha hill forts, and dynamic urban life.",
+places:"Siddhivinayak Temple, Trimbakeshwar, Shirdi Sai Baba Temple, Ajanta-Ellora Caves, Ashtavinayak",
+culture:"Lavani dance, Powada folk music, Warli tribal art, and rich Maratha heritage.",
+musicAndDance:"Lavani, Koli dance, Powada, and Natya Sangeet.",
+languagePhrases:"<b>Hello:</b> Namaskar<br><b>How are you?:</b> Kasa ahes tu?<br><b>Thank you:</b> Dhanyavad",
+festivals:"Ganesh Chaturthi, Gudi Padwa, Narali Poornima, and Kojagari Purnima.",
+food:"Vada Pav, Misal Pav, Puran Poli, Modak, Pithla Bhakri, and Maharashtrian Thali.",
+tourismWebsite:"https://www.maharashtratourism.gov.in/"
+},
+{
+name:"Manipur",
+region:"northeast",
+capital:"Imphal",
+image:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85",
+description:"A beautiful northeastern state known for hills, lakes, dance and indigenous traditions.",
+places:"Imphal, Loktak Lake, Kangla, Ukhrul",
+culture:"Manipuri classical dance, handloom and indigenous arts.",
+musicAndDance:"Raas Leela (Manipuri classical), Pung Cholom, and Thang-Ta.",
+languagePhrases:"<b>Hello:</b> Khurumjari<br><b>How are you?:</b> Nungngairibra?<br><b>Thank you:</b> Thagatchari",
+festivals:"Yaoshang, Lai Haraoba and Ningol Chakouba.",
+food:"Eromba, Singju and Manipuri rice dishes.",
+tourismWebsite:"https://manipurtourism.gov.in/"
+},
+{
+name:"Meghalaya",
+region:"northeast",
+capital:"Shillong",
+image:"https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85",
+description:"The land of clouds is famous for waterfalls, living root bridges, caves and vibrant hill cultures.",
+places:"Shillong, Cherrapunjee, Dawki, Mawlynnong",
+culture:"Khasi, Jaintia and Garo traditions, music and crafts.",
+musicAndDance:"Nongkrem dance, Shad Suk Mynsiem, and Wangala. Traditional drum and flute music.",
+languagePhrases:"<b>Hello:</b> Khublei<br><b>How are you?:</b> Kumno phi long?<br><b>Thank you:</b> Khublei shibun",
+festivals:"Wangala, Shad Suk Mynsiem and Nongkrem.",
+food:"Jadoh, tungrymbai and local smoked dishes.",
+tourismWebsite:"https://www.meghalayatourism.in/"
+},
+{
+name:"Mizoram",
+region:"northeast",
+capital:"Aizawl",
+image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=85",
+description:"Rolling green hills, bamboo crafts and warm community traditions define Mizoram.",
+places:"Aizawl, Champhai, Lunglei, Reiek",
+culture:"Mizo dances, bamboo crafts, music and community traditions.",
+musicAndDance:"Cheraw (Bamboo dance), Khuallam, and Chheihlam.",
+languagePhrases:"<b>Hello:</b> Chibai<br><b>How are you?:</b> I dam em?<br><b>Thank you:</b> Ka lawm e",
+festivals:"Chapchar Kut, Mim Kut and Pawl Kut.",
+food:"Bai, Vawksa rep and bamboo shoot dishes.",
+tourismWebsite:"https://tourism.mizoram.gov.in/"
+},
+{
+name:"Nagaland",
+region:"northeast",
+capital:"Kohima",
+image:"https://images.unsplash.com/photo-1464278533981-50106e6176b1?auto=format&fit=crop&w=1200&q=85",
+description:"A mountainous state celebrated for its tribal heritage, textiles, music and spectacular landscapes.",
+places:"Kohima, Dimapur, Dzukou Valley, Mokokchung",
+culture:"Naga tribal traditions, weaving, music and crafts.",
+musicAndDance:"War dance, Zeliang dance, and traditional Naga rhythmic chanting.",
+languagePhrases:"<b>Hello:</b> Namaste<br><b>How are you?:</b> Kini ase?<br><b>Thank you:</b> Dhanyabad",
+festivals:"Hornbill Festival, Moatsu and Sekrenyi.",
+food:"Smoked pork, bamboo shoot dishes and Naga-style cuisine.",
+tourismWebsite:"https://tourism.nagaland.gov.in/"
+},
+{
+name:"Odisha",
+region:"east",
+capital:"Bhubaneswar",
+image:"https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?auto=format&fit=crop&w=1200&q=85",
+description:"A coastal paradise celebrated for sacred shrines, classical dance forms, traditional handicrafts, and unique sweets.",
+places:"Jagannath Temple Puri, Konark Sun Temple, Lingaraj Temple, Chilika Lake, Golden Beach Puri",
+culture:"Odissi classical dance, Pattachitra scroll paintings, Sambalpuri handloom, and sand art.",
+musicAndDance:"Odissi (Classical), Gotipua, Sambalpuri, and Chhau.",
+languagePhrases:"<b>Hello:</b> Namaskar<br><b>How are you?:</b> Kemiti achanti?<br><b>Thank you:</b> Dhanyabad",
+festivals:"Puri Rath Yatra, Raja Parba, Nuakhai, Durga Puja, and Konark Dance Festival.",
+food:"Dalma, Chhena Poda, Pakhala Bhata, Rasagola, and Kanika.",
+tourismWebsite:"https://odishatourism.gov.in/"
+},
+{
+name:"Punjab",
+region:"north",
+capital:"Chandigarh",
+image:"https://images.unsplash.com/photo-1514222134-b57cbb8ce073?auto=format&fit=crop&w=1200&q=85",
+description:"A vibrant land of Sikh heritage, farming traditions, music and legendary hospitality.",
+places:"Sri Harmandir Sahib (Golden Temple), Wagah Border, Anandpur Sahib, Qila Mubarak Patiala",
+culture:"Phulkari embroidery, deeply rooted agricultural lifestyles, and Sikh spiritual traditions.",
+musicAndDance:"The heartbeat of Punjab lies in the high-energy beats of traditional Bhangra and Giddha, alongside rich Punjabi folk music.",
+languagePhrases:"<b>Hello:</b> Sat Sri Akal<br><b>How are you?:</b> Ki haal hai?<br><b>Thank you:</b> Dhanwaad",
+festivals:"Baisakhi, Lohri, Holla Mohalla, and Gurpurabs.",
+food:"Sarson da Saag, Makki di Roti, Amritsari Kulcha, Chole Bhature, and Lassi.",
+tourismWebsite:"https://punjabtourism.punjab.gov.in/"
+},
+{
+name:"Rajasthan",
+region:"north",
+capital:"Jaipur",
+image:"https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=90",
+description:"The land of royal forts, desert landscapes, colourful textiles and magnificent palaces.",
+places:"Jaipur, Jodhpur, Udaipur, Jaisalmer, Pushkar",
+culture:"Folk music, Ghoomar, miniature painting and traditional crafts.",
+musicAndDance:"Ghoomar, Kalbelia, Bhavai, and Manganiyar folk music.",
+languagePhrases:"<b>Hello:</b> Khamma Ghani<br><b>How are you?:</b> Maja ma?<br><b>Thank you:</b> Dhanyawad",
+festivals:"Pushkar Fair, Gangaur, Teej and Desert Festival.",
+food:"Dal baati churma, gatte ki sabzi, ker sangri and ghevar.",
+tourismWebsite:"https://www.tourism.rajasthan.gov.in/"
+},
+{
+name:"Sikkim",
+region:"northeast",
+capital:"Gangtok",
+image:"https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1200&q=85",
+description:"A Himalayan state of monasteries, dramatic mountains, forests and peaceful Buddhist traditions.",
+places:"Gangtok, Pelling, Yumthang, Nathula",
+culture:"Buddhist monasteries, Lepcha traditions and Himalayan crafts.",
+musicAndDance:"Singhi Chham, Maruni, and traditional Tibetan/Lepcha folk music.",
+languagePhrases:"<b>Hello:</b> Namaste<br><b>How are you?:</b> Kasto chha?<br><b>Thank you:</b> Dhanyabad",
+festivals:"Losar, Pang Lhabsol and Saga Dawa.",
+food:"Momos, thukpa, phagshapa and local noodles.",
+tourismWebsite:"https://www.sikkimtourism.gov.in/"
+},
+{
+name:"Tamil Nadu",
+region:"south",
+capital:"Chennai",
+image:"https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=85",
+description:"One of India's great cultural regions, famous for Dravidian temples, classical arts and coastal heritage.",
+places:"Chennai, Madurai, Thanjavur, Mahabalipuram, Ooty",
+culture:"Bharatanatyam, Carnatic music, temple architecture and classical literature.",
+musicAndDance:"Bharatanatyam, Karakattam, Parai Attam, and Carnatic music.",
+languagePhrases:"<b>Hello:</b> Vanakkam<br><b>How are you?:</b> Eppadi irukkinga?<br><b>Thank you:</b> Nandri",
+festivals:"Pongal, Tamil New Year and Natyanjali.",
+food:"Idli, dosa, sambar, pongal and Chettinad cuisine.",
+tourismWebsite:"https://www.tamilnadutourism.tn.gov.in/"
+},
+{
+name:"Telangana",
+region:"south",
+capital:"Hyderabad",
+image:"https://images.unsplash.com/photo-1513326738677-b964603b136d?auto=format&fit=crop&w=1200&q=85",
+description:"A fascinating blend of Deccan history, Islamic architecture, Telugu traditions and modern urban culture.",
+places:"Hyderabad, Warangal, Bhongir, Karimnagar",
+culture:"Bidri crafts, handlooms and rich Deccani traditions.",
+musicAndDance:"Perini Sivatandavam, Bathukamma dance, and Oggu Katha.",
+languagePhrases:"<b>Hello:</b> Namaskaram<br><b>How are you?:</b> Ela unnaru?<br><b>Thank you:</b> Dhanyavadalu",
+festivals:"Bathukamma, Bonalu and Ugadi.",
+food:"Hyderabadi biryani, haleem, double ka meetha and Telangana cuisine.",
+tourismWebsite:"https://tourism.telangana.gov.in/"
+},
+{
+name:"Tripura",
+region:"northeast",
+capital:"Agartala",
+image:"https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85",
+description:"A green northeastern state with royal heritage, temples and diverse tribal traditions.",
+places:"Agartala, Ujjayanta Palace, Unakoti, Neermahal",
+culture:"Tribal music, bamboo crafts and royal heritage.",
+musicAndDance:"Hojagiri, Garia dance, and Lebang Boomani.",
+languagePhrases:"<b>Hello:</b> Khulumkha<br><b>How are you?:</b> Kha kothoma?<br><b>Thank you:</b> Hamjakma",
+festivals:"Kharchi Puja, Garia Puja and Durga Puja.",
+food:"Mui Borok, bamboo shoot dishes and local fish preparations.",
+tourismWebsite:"https://tripuratourism.gov.in/"
+},
+{
+name:"Uttar Pradesh",
+region:"north",
+capital:"Lucknow",
+image:"https://images.unsplash.com/photo-1561359313-0639aad49ca6?auto=format&fit=crop&w=1200&q=90",
+description:"A major centre of India's spiritual, architectural and literary heritage.",
+places:"Varanasi Ghats, Ayodhya Ram Mandir, Lucknow Imambara, Mathura, Vrindavan",
+culture:"Kathak dance, Awadhi royal culture, Chikankari embroidery, and Banarasi silk weaving.",
+musicAndDance:"Kathak (Classical), Charkula, Raslila, and Thumri / Ghazals.",
+languagePhrases:"<b>Hello:</b> Namaste<br><b>How are you?:</b> Aap kaise hain?<br><b>Thank you:</b> Dhanyawad",
+festivals:"Kumbh Mela, Dev Deepawali, Taj Mahotsav, Holi, and Janmashtami.",
+food:"Awadhi Biryani, Tunday Kebab, Bedmi Puri, Banarasi Paan, and Malai Yo.",
+tourismWebsite:"https://www.uptourism.gov.in/"
+},
+{
+name:"Uttarakhand",
+region:"north",
+capital:"Dehradun",
+image:"https://images.unsplash.com/photo-1593693411515-c20261bcad6e?auto=format&fit=crop&w=1200&q=85",
+description:"The Land of Gods (Devbhoomi) nestled in the Himalayas, renowned for pilgrimage sites, sacred rivers, and vibrant hill culture.",
+places:"Kedarnath Temple, Badrinath Temple, Rishikesh, Haridwar, Valley of Flowers, Nainital",
+culture:"Garhwali and Kumaoni folk music, Choliya dance, Aipan art, and Pahari traditions.",
+musicAndDance:"Choliya, Langvir Nritya, Barada Nati, and traditional Kumaoni/Garhwali folk.",
+languagePhrases:"<b>Hello:</b> Parnam<br><b>How are you?:</b> Kik kano cho?<br><b>Thank you:</b> Dhanyawad",
+festivals:"Phool Dei, Nanda Devi Raj Jat Yatra, Harela, Ganga Aarti, and International Yoga Festival.",
+food:"Kafuli, Aloo ke Gutke, Bal Mithai, Bhatt ki Churkani, Dubuk, and Singori.",
+tourismWebsite:"https://uttarakhandtourism.gov.in/"
+},
+{
+name:"West Bengal",
+region:"east",
+capital:"Kolkata",
+image:"https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=1200&q=85",
+description:"A cultural powerhouse celebrated for literature, art, music, temples and colonial heritage.",
+places:"Kolkata, Darjeeling, Sundarbans, Bishnupur",
+culture:"Rabindra Sangeet, Bengali literature, terracotta art and classical traditions.",
+musicAndDance:"Baul music, Rabindra Sangeet, Chhau, and Santhali dance.",
+languagePhrases:"<b>Hello:</b> Nomoshkar<br><b>How are you?:</b> Kemon achen?<br><b>Thank you:</b> Dhonnobad",
+festivals:"Durga Puja, Poila Boishakh and Kali Puja.",
+food:"Macher jhol, mishti doi, rasgulla and Kolkata-style street food.",
+tourismWebsite:"https://wbtourism.gov.in/"
+},
+
+{
+name:"Lakshadweep",
+region:"south",
+capital:"Kavaratti",
+image:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85",
+description:"A coral-island Union Territory in the Arabian Sea, known for lagoons, reefs, island traditions and distinctive coastal culture.",
+places:"Kavaratti, Agatti, Bangaram, Minicoy, Kalpeni, Kadmat",
+culture:"Island communities shaped by seafaring, coconut cultivation, fishing, coral-island life and traditional crafts.",
+musicAndDance:"Lava dance, Kolkali and Parichakali are among the traditional performance traditions associated with the islands.",
+languagePhrases:"<b>Hello:</b> Assalamu Alaikum<br><b>How are you?:</b> Sukhamano?<br><b>Thank you:</b> Shukriya",
+festivals:"Eid celebrations, traditional island festivities and community events.",
+food:"Tuna preparations, coconut-based curries, rice dishes and traditional Maldivian-influenced island cuisine.",
+tourismWebsite:"https://lakshadweep.gov.in/"
+},
+{
+name:"Andaman and Nicobar Islands",
+region:"south",
+capital:"Port Blair",
+image:"https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?auto=format&fit=crop&w=1200&q=85",
+description:"A group of tropical islands in the Bay of Bengal, celebrated for marine biodiversity, forests, beaches and diverse island heritage.",
+places:"Port Blair, Cellular Jail, Havelock (Swaraj Dweep), Neil Island (Shaheed Dweep), Baratang, Ross Island",
+culture:"A diverse island heritage shaped by coastal communities, indigenous traditions, maritime history and settlement cultures.",
+musicAndDance:"Island folk traditions, community songs and dances, with cultural practices varying across the islands.",
+languagePhrases:"<b>Hello:</b> Namaste<br><b>How are you?:</b> Kaise hain?<br><b>Thank you:</b> Dhanyawad",
+festivals:"Island cultural festivals, Independence Day events and local community celebrations.",
+food:"Seafood, coconut-based curries, rice dishes and a wide variety of coastal Indian cuisines.",
+tourismWebsite:"https://www.andamantourism.gov.in/"
+},
+
+{
+name:"Delhi",
+region:"north",
+capital:"New Delhi",
+image:"https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=90",
+description:"India's capital is a remarkable meeting point of ancient empires, modern institutions and diverse communities.",
+places:"Red Fort, Qutub Minar, India Gate, Humayun's Tomb",
+culture:"Mughal, colonial and contemporary influences.",
+musicAndDance:"Qawwali, Hindustani Classical, and modern contemporary diverse arts.",
+languagePhrases:"<b>Hello:</b> Namaste<br><b>How are you?:</b> Aap kaise hain?<br><b>Thank you:</b> Shukriya",
+festivals:"Diwali, Holi, Eid and Republic Day.",
+food:"Chole bhature, kebabs, parathas and Delhi street food.",
+tourismWebsite:"https://www.delhitourism.gov.in/"
+},
+{
+name:"Jammu and Kashmir",
+region:"north",
+capital:"Srinagar",
+image:"https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=1200&q=85",
+description:"A Himalayan paradise known for scenic valleys, Dal Lake houseboats, snow peaks, and rich craft traditions.",
+places:"Dal Lake, Gulmarg Snow Meadows, Pahalgam, Shikara Ride, Sonamarg, Shankaracharya Temple",
+culture:"Kashmiri Pashmina weaving, carpet handicraft, Rouff dance, Sufiana music, and wood carving.",
+musicAndDance:"Rouf, Hafiz Nagma, Sufiana Kalam, and Chakri.",
+languagePhrases:"<b>Hello:</b> As-salamu alaykum / Namaskar<br><b>How are you?:</b> Tohi chhuva theek?<br><b>Thank you:</b> Shukriya",
+festivals:"Tulip Festival, Shikara Festival, Baisakhi, and Gurez Festival.",
+food:"Kashmiri Wazwan, Rogan Josh, Dum Aloo, Kahwa Tea, Modur Pulao, and Tabak Maaz.",
+tourismWebsite:"https://www.jktourism.jk.gov.in/"
+},
+{
+name:"Ladakh",
+region:"north",
+capital:"Leh",
+image:"https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=85",
+description:"A high-altitude Himalayan land of monasteries, dramatic mountains and distinctive Tibetan Buddhist culture.",
+places:"Leh, Nubra Valley, Pangong Lake, Lamayuru",
+culture:"Tibetan Buddhist monasteries, traditional arts and mountain communities.",
+musicAndDance:"Jabro, Shondol, and traditional monastic Cham dances.",
+languagePhrases:"<b>Hello:</b> Julley<br><b>How are you?:</b> Khamzang in-a-ley?<br><b>Thank you:</b> Thuk-je-chey",
+festivals:"Hemis Festival, Losar and Dosmoche.",
+food:"Thukpa, momos, skyu and butter tea.",
+tourismWebsite:"https://ladakhtourism.org/"
+}
+];
+
+/* ==========================================
+   CREATE STATE CARDS
+========================================== */
+
+const statesGrid = document.getElementById("statesGrid");
+
+function renderStates(){
+    const search = document.getElementById("search").value.toLowerCase();
+    const region = document.getElementById("regionFilter").value;
+
+    statesGrid.innerHTML="";
+
+    states.filter(state => {
+        const matchesSearch = state.name.toLowerCase().includes(search);
+        const matchesRegion = region === "all" || state.region === region;
+        return matchesSearch && matchesRegion;
+    }).forEach(state => {
+        const card = document.createElement("div");
+        card.className="state-card hover-target";
+
+        card.innerHTML=`
+            <img
+                src="${state.image}"
+                alt="${state.name}"
+                loading="lazy"
+                onerror="this.src='https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=1000&q=80'"
+            >
+            <div class="state-info">
+                <small>${state.region.toUpperCase()}</small>
+                <h3>${state.name}</h3>
+            </div>
+        `;
+
+        card.onclick=()=>{
+            openState(state);
+        };
+        statesGrid.appendChild(card);
+    });
+    
+    // Re-bind hover targets for dynamically generated elements
+    initCursorHover();
+}
+
+renderStates();
+
+document.getElementById("search").addEventListener("input",renderStates);
+document.getElementById("regionFilter").addEventListener("change",renderStates);
+
+/* ==========================================
+   MODAL
+========================================== */
+
+const modal = document.getElementById("stateModal");
+
+function openState(state){
+    document.getElementById("modalImage").src = state.image;
+    document.getElementById("modalName").textContent = state.name;
+    document.getElementById("modalRegion").textContent = state.region.toUpperCase() + " • " + state.capital;
+    document.getElementById("modalDescription").textContent = state.description;
+    document.getElementById("modalPlaces").textContent = state.places;
+    document.getElementById("modalCulture").textContent = state.culture;
+    document.getElementById("modalMusic").textContent = state.musicAndDance;
+    document.getElementById("modalLanguage").innerHTML = state.languagePhrases;
+    document.getElementById("modalFestivals").textContent = state.festivals;
+    document.getElementById("modalFood").textContent = state.food;
+    document.getElementById("modalTourismLink").href = state.tourismWebsite;
+
+    modal.classList.add("active");
+    document.body.style.overflow="hidden";
+}
+
+document.getElementById("closeModal").onclick=closeModal;
+
+modal.addEventListener("click",e=>{
+    if(e.target===modal){
+        closeModal();
+    }
+});
+
+document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){
+        closeModal();
+    }
+});
+
+function closeModal(){
+    modal.classList.remove("active");
+    document.body.style.overflow="";
+}
+
+/* ==========================================
+   LEAFLET INDIA MAP
+========================================== */
+
+const map = L.map("map",{
+    zoomControl:true,
+    minZoom:3,
+    maxZoom:7,
+    scrollWheelZoom:true
+}).setView([22.5,80],4.4);
+
+L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    {
+        attribution:"© OpenStreetMap © CARTO",
+        maxZoom:19
+    }
+).addTo(map);
+
+const geoJSONURL = "https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson";
+
+/*
+ * The main India-state GeoJSON used above does not contain the two island
+ * Union Territories.  We therefore add dedicated GeoJSON for them.
+ * These are intentionally separate layers so the islands remain visible
+ * and clickable even if the external state dataset omits them.
+ */
+const islandFeatures = [
+    {
+        type:"Feature",
+        properties:{name:"Lakshadweep", group:"lakshadweep"},
+        geometry:{
+            type:"MultiPolygon",
+            coordinates:[
+                [[[73.02,8.05],[73.18,8.10],[73.22,8.28],[73.08,8.38],[72.94,8.28],[73.02,8.05]]],
+                [[[72.15,10.70],[72.27,10.72],[72.34,10.88],[72.23,10.98],[72.10,10.90],[72.15,10.70]]],
+                [[[72.60,10.48],[72.72,10.50],[72.79,10.62],[72.70,10.73],[72.56,10.66],[72.60,10.48]]],
+                [[[72.18,10.78],[72.28,10.80],[72.34,10.90],[72.27,11.00],[72.15,10.96],[72.18,10.78]]],
+                [[[72.70,11.20],[72.84,11.22],[72.90,11.36],[72.80,11.46],[72.67,11.40],[72.70,11.20]]],
+                [[[72.90,11.35],[73.04,11.37],[73.11,11.52],[73.01,11.63],[72.87,11.56],[72.90,11.35]]],
+                [[[72.60,11.68],[72.75,11.70],[72.83,11.86],[72.72,11.97],[72.56,11.90],[72.60,11.68]]]
+            ]
+        }
+    },
+    {
+        type:"Feature",
+        properties:{name:"Andaman and Nicobar Islands", group:"andaman"},
+        geometry:{
+            type:"MultiPolygon",
+            coordinates:[
+                [[[92.52,13.10],[92.67,13.18],[92.76,13.38],[92.66,13.57],[92.49,13.49],[92.43,13.28],[92.52,13.10]]],
+                [[[92.61,12.55],[92.77,12.58],[92.88,12.82],[92.80,13.00],[92.62,12.95],[92.54,12.72],[92.61,12.55]]],
+                [[[92.71,12.05],[92.88,12.09],[92.98,12.34],[92.88,12.50],[92.69,12.43],[92.63,12.22],[92.71,12.05]]],
+                [[[92.73,11.50],[92.92,11.53],[93.04,11.77],[92.96,11.96],[92.76,11.90],[92.66,11.68],[92.73,11.50]]],
+                [[[92.76,10.95],[92.95,10.98],[93.08,11.21],[93.00,11.42],[92.80,11.37],[92.69,11.12],[92.76,10.95]]],
+                [[[92.80,10.35],[93.00,10.40],[93.12,10.63],[93.03,10.83],[92.83,10.78],[92.72,10.54],[92.80,10.35]]],
+                [[[92.82,9.72],[93.02,9.76],[93.14,9.99],[93.06,10.20],[92.86,10.15],[92.75,9.91],[92.82,9.72]]],
+                [[[92.70,9.05],[92.91,9.10],[93.03,9.34],[92.95,9.55],[92.75,9.49],[92.64,9.25],[92.70,9.05]]],
+                [[[92.55,8.48],[92.75,8.53],[92.86,8.76],[92.78,8.96],[92.58,8.90],[92.47,8.67],[92.55,8.48]]],
+                [[[92.52,7.20],[92.70,7.25],[92.82,7.46],[92.74,7.66],[92.55,7.61],[92.44,7.38],[92.52,7.20]]],
+                [[[92.56,6.72],[92.75,6.77],[92.87,6.98],[92.79,7.17],[92.60,7.13],[92.49,6.90],[92.56,6.72]]]
+            ]
+        }
+    }
+];
+
+const islandGeoJSON = {
+    type:"FeatureCollection",
+    features:islandFeatures
+};
+
+const baseStyle = {
+    color:"#ffb04a",
+    weight:1,
+    fillColor:"#c96f25",
+    fillOpacity:.28
+};
+
+function findStateForMapName(name){
+    const normalized = name
+        .toLowerCase()
+        .replace(/&/g, "and")
+        .replace(/union territory/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    return states.find(s => {
+        const stateName = s.name.toLowerCase().replace(/&/g, "and");
+        return normalized === stateName ||
+               normalized.includes(stateName) ||
+               stateName.includes(normalized);
+    });
+}
+
+function attachMapInteraction(layer, name){
+    layer.bindTooltip(name, {
+        className:"state-tooltip",
+        sticky:true
+    });
+
+    layer.on({
+        mouseover:function(e){
+            e.target.setStyle({
+                weight:3,
+                color:"#ffd08a",
+                fillColor:"#ff922e",
+                fillOpacity:.72
+            });
+            cursorOutline.classList.add("hover-active");
+        },
+        mouseout:function(e){
+            e.target.setStyle({
+                weight:1,
+                color:"#ffb04a",
+                fillColor:"#c96f25",
+                fillOpacity:.28
+            });
+            cursorOutline.classList.remove("hover-active");
+        },
+        click:function(){
+            const found = findStateForMapName(name);
+            if(found){
+                openState(found);
+            }
+        }
+    });
+}
+
+fetch(geoJSONURL)
+.then(response=>{
+    if(!response.ok) throw new Error("Main India map request failed");
+    return response.json();
+})
+.then(data=>{
+    L.geoJSON(data,{
+        style:()=>({...baseStyle}),
+        onEachFeature:function(feature,layer){
+            const name =
+                feature.properties.ST_NM ||
+                feature.properties.NAME_1 ||
+                feature.properties.st_nm ||
+                feature.properties.name ||
+                "Indian State";
+
+            attachMapInteraction(layer,name);
+        }
+    }).addTo(map);
+
+    /*
+     * Add the islands after the mainland so they are clearly visible and
+     * remain independent clickable map features.
+     */
+    const islandLayer = L.geoJSON(islandGeoJSON,{
+        style:feature=>({
+            ...baseStyle,
+            weight:1.5,
+            fillOpacity:.55
+        }),
+        onEachFeature:function(feature,layer){
+            attachMapInteraction(layer,feature.properties.name);
+        }
+    }).addTo(map);
+
+    // Keep both island groups comfortably inside the initial map view.
+    const allBounds = L.featureGroup([
+        L.geoJSON(data),
+        islandLayer
+    ]).getBounds();
+
+    if(allBounds.isValid()){
+        map.fitBounds(allBounds.pad(0.08), {
+            padding:[20,20],
+            maxZoom:5
+        });
+    }
+})
+.catch(error=>{
+    console.log("India map data could not be loaded:",error);
+
+    // Even if the external mainland GeoJSON fails, the islands still work.
+    L.geoJSON(islandGeoJSON,{
+        style:feature=>({
+            ...baseStyle,
+            weight:1.5,
+            fillOpacity:.55
+        }),
+        onEachFeature:function(feature,layer){
+            attachMapInteraction(layer,feature.properties.name);
+        }
+    }).addTo(map);
+});
+
+/* ==========================================
+   NAVBAR
+========================================== */
+
+window.addEventListener("scroll",()=>{
+    const nav = document.getElementById("navbar");
+    if(window.scrollY>50){
+        nav.classList.add("scrolled");
+    }else{
+        nav.classList.remove("scrolled");
+    }
+});
+
+/* ==========================================
+   LOADER
+========================================== */
+
+window.addEventListener("load",()=>{
+    setTimeout(()=>{
+        document.getElementById("loader").classList.add("hide");
+    },800);
+    initCursorHover();
+});
+
+/* ==========================================
+   SCROLL REVEAL
+========================================== */
+
+const observer = new IntersectionObserver(
+    entries=>{
+        entries.forEach(entry=>{
+            if(entry.isIntersecting){
+                entry.target.style.opacity="1";
+                entry.target.style.transform="translateY(0)";
+            }
+        });
+    },
+    { threshold:.12 }
+);
+
+document.querySelectorAll(".culture-card,.state-card,.experience-item").forEach(el=>{
+    el.style.opacity="0";
+    el.style.transform="translateY(30px)";
+    el.style.transition="opacity .7s ease, transform .7s ease";
+    observer.observe(el);
+});
+
+</script>
+</body>
+</html>
