@@ -1,5 +1,3 @@
-# India-heritage-culture
-An interactive web prototype showcasing India's rich heritage, culture, food , art , crafts , festivals , and  traditions.
 # 🇮🇳 India's Heritage and Culture
 
 An interactive web prototype showcasing India's rich heritage, culture, traditions, food, arts, crafts, festivals, and historical diversity.
@@ -30,8 +28,9 @@ This project was developed as a prototype for the **Smart India Hackathon (SIH) 
 
 ## 🌐 Live Prototype
 
-🚀 **View the live prototype:**  
-[Click here to view the website](PASTE-YOUR-NETLIFY-LINK-HERE)
+🚀 **View the live prototype here:**
+
+https://meek-pie-a9d0be.netlify.app
 
 ## 🏆 Hackathon Experience
 
